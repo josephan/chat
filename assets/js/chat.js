@@ -25,19 +25,20 @@ class Chat {
 
     // sync presence state
     this.room.on('presence_state', state => {
-      console.log('PRESENCE_STATE: ', state);
       this.presences = Presence.syncState(this.presences, state);
       this.renderPresences(this.presences);
     });
 
     this.room.on('presence_diff', state => {
-      console.log('PRESENCE_DIFF: ', state);
       this.presences = Presence.syncDiff(this.presences, state);
       this.renderPresences(this.presences);
     });
 
     // setup new message handler
     this.room.on('message:new', this.renderMessage);
+    this.room.on('messages:recent', ({data: messages}) => {
+      messages.map(this.renderMessage);
+    });
 
     // setup input handlers
     this.messageInput.addEventListener('keypress', e => {
